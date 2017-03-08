@@ -1,0 +1,186 @@
+---
+title: "STA286 Lecture 19"
+author: "Neil Montgomery"
+date: "Last edited: `r format(Sys.time(), '%Y-%m-%d %H:%M')`"
+output: 
+  beamer_presentation:
+    keep_tex: TRUE
+    incremental: TRUE
+    df_print: tibble
+    fig_caption: FALSE
+classoption: aspectratio=169
+header-includes:
+- \renewcommand{\le}{\leqslant}
+- \renewcommand{\ge}{\geqslant}
+- \renewcommand\P[1]{P{\left(#1\right)}}
+- \newcommand\F[1]{F_{\tiny{#1}}}
+- \newcommand\f[1]{f_{\tiny{#1}}}
+- \newcommand\p[1]{p_{\tiny{#1}}}
+- \newcommand\M[1]{M_{\tiny{#1}}}
+- \newcommand\V[1]{\text{Var}\!\left(#1\right)}
+- \newcommand\E[1]{E\!\left(#1\right)}
+- \newcommand\N[1]{N_{\tiny{#1}}}
+- \newcommand\ol{\overline}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
+options(tibble.width=70)
+```
+
+## other distributions
+
+There are lots of other distributions (continuous and discrete) that have many applications, but we'll stop here.
+
+There will be a few more special-purpose distributions specific for data analysis that I'll introduce when necessary.
+
+# statistics
+
+## the general problem, and its solution
+
+For every probability problem done so far, the distribution was completely known, along with all paramater values.
+
+\pause The problem is: often we encounter one or more distributions that are only partially specified, such as:
+
+* $N(\mu, 2)$, $\mu$ unknown.
+
+* $N(\mu, \sigma)$, both parameters unknown.
+
+* "Some distribution that has unknown mean and variance."
+
+\pause etc. 
+
+\pause The solution to this problem is to obtain a dataset, and use it to \textit{infer} statements about the underlying distribution.
+
+## a probabilistic model for the phrase "to obtain a dataset"
+
+One model for this prospective dataset can be to consider it as a mix of columns of length $n$ where some (or all) of the columns are random.
+
+A random column is headed by random variable (with "the underlying distribution"), and the contents are random variable "copies" of that underlying distribution.
+
+There could be non-random columns with categorical or numerical information.
+\pause
+\begin{table}[ht]
+\begin{tabular}{cccccc}
+\onslide<4->{"Subject ID"} & $X$ & \onslide<3->{$Y$} & \onslide<5->{"Group ID"} & \onslide<6->{"InputVar"}\\\hline
+\onslide<4->{ID345} & $X_1$ & \onslide<3->{$Y_1$} & \onslide<5->{A} & \onslide<6->{$w_1$}\\
+\onslide<4->{ID952} & $X_2$ & \onslide<3->{$Y_2$} & \onslide<5->{A} & \onslide<6->{$w_2$}\\
+\onslide<4->{ID826} & $X_3$ & \onslide<3->{$Y_3$} & \onslide<5->{B} & \onslide<6->{$w_3$}\\
+\onslide<4->{ID118} & $X_4$ & \onslide<3->{$Y_4$} & \onslide<5->{B} & \onslide<6->{$w_4$}\\
+\onslide<4->{\vdots} & \vdots & \onslide<3->{\vdots} & \onslide<5->{\vdots}& \onslide<6->{\vdots}\\
+\onslide<4->{ID503} & $X_n$ & \onslide<3->{$Y_n$} & \onslide<5->{A} & \onslide<6->{$w_n$}
+\end{tabular}
+\end{table} 
+
+## the dataset, once observed, is fixed
+
+The model for a dataset is a model for the plan you make to collect it.
+
+Every method of analysis we will discuss is based on this plan to collect.
+
+\pause ...because once the dataset is collected, there is nothing random about it. It is a fixed rectangle of numbers/etc.
+
+## definition of sample | definition of statistic
+
+The basic model for what we'll call a \textit{sample} is a sequence of random variables that are independent with the same distribution (abbreviation: i.i.d.):
+$$X_1,X_2,\ldots,X_n$$
+
+\pause This is a column of the dataset.
+
+\pause Some practical generalizations we won't touch: the elements are not independent; the elements do not have the same distribution (e.g. change as a function of time.)
+
+\pause A \textit{statistic} is defined as \textit{a function of the sample.} So, a statistic is a random variable. 
+
+## example of statistic
+
+The \textit{sample mean} (or sample average):
+$$\ol{X} = \frac{\sum\limits_{i=1}^n X_i}{n}$$
+
+\pause Source of confusion: the function $\ol{x} = \sum\limits_{i=1}^n x_i/n$ of a column $\{x_1,\ldots,x_n\}$ in an \textit{observed} dataset is also called "sample mean", but this is not a random quantity.
+
+\pause I might call $\ol{x}$ the "observed" sample mean, but you really just need to get used to the terminology.
+
+\pause You might have a plan to guess the unknown "true" mean of a random variable $X$ using the sample mean $\ol{X}$ of a sample $X_1,\ldots,X_n$ (whose properties can be studied using probability), and when you actually observe the sample $x_1,\ldots,x_n$ your actual guess will be $\ol{x}$.
+
+## more "statisics"
+
+The \textit{sample variance}:
+$$S^2 = \frac{\sum\limits_{i=1}^n \left(X_i - \ol{X}\right)^2}{n-1}$$
+(source of confusion: the (observed) sample variance $s^2 = \frac{\sum\limits_{i=1}^n \left(x_i - \ol{x}\right)^2}{n-1}$)
+
+\pause The \textit{sample standard deviation}: $S=\sqrt{S^2}$
+
+\pause More: 
+
+* the sum $\sum\limits_{i=1}^n X_i$
+* the \textit{sample median}...
+* the \textit{maximum} $X_{(n)}$
+* the \textit{sample range} $X_{(n)} - X_{(1)}$
+
+## "sampling distributions"
+
+Statistics are random variables, so we mainly care about their distributions, which are (unnecessarily) called the "sampling distributions".
+
+\pause Example, if $X_1,\ldots,X_n$ are i.i.d. Bernoulli($p$), the statistic $\sum_i X_i$ has a Binomial$(n,p)$ distribution. (What about $\ol{X}$ in this case?)
+
+\pause Example: if $X_1,\ldots,X_n$ are i.i.d. Exponential($\lambda$), the sample mean $\ol{X}$ has a Gamma$(n, n\lambda)$ distribution.
+
+\pause Important example: if $X_1,\ldots,X_n$ are i.i.d. $N(\mu, \sigma)$...
+
+## basic result for $\ol{X}$ in general
+
+For a sample $X_1,\ldots,X_n$ i.i.d. from \textit{any} distribution with mean $\mu$ and variance $\sigma^2$, the following are always true:
+
+\begin{align*}
+\E{\ol{X}} \onslide<+->{&= \E{\frac{1}{n}\sum\limits_{i=1}^n X_i}} \onslide<+->{= \frac{1}{n}\sum\limits_{i=1}^n \E{X_i}} \onslide<+->{=\frac{1}{n}n\mu=\mu}\\
+\V{\ol{X}} &= \V{\frac{1}{n}\sum\limits_{i=1}^n X_i} \onslide<+->{= \frac{1}{n^2}\sum\limits_{i=1}^n \V{X_i}} \onslide<+->{=\frac{1}{n^2}n\sigma^2=\frac{\sigma^2}{n}}\\
+\onslide<+->{SD(\ol{X}) &= \frac{\sigma}{\sqrt{n}}}
+\end{align*}
+
+## full distribution of $\ol{X}$ when sample is normal
+
+For a sample $X_1,\ldots,X_n$ i.i.d. $N(\mu,\sigma)$ we have:
+
+$$\M{\sum\limits_{i=1}^n X_i}(t) = \onslide<+->{\prod\limits_{i=1}^n\M{X_i}(t)} \onslide<+->{=\left(e^{\mu t + \sigma^2t^2/2}\right)^n} \onslide<+->{=e^{n\mu t + n\sigma^2t^2/2}}$$
+so that $\sum\limits_{i=1}^n X_i \sim N\left(n\mu, \sqrt{n}\sigma\right)$
+
+\pause Using the rules for normal distributions we also get:
+$$\onslide<+->{\ol{X} \sim N\left(\mu, \frac{\sigma}{\sqrt{n}}\right)}
+\onslide<+->{\qquad\qquad \frac{\ol{X} - \mu}{\sigma/\sqrt{n}} \sim N(0,1)}$$
+
+\pause The seemingly impossible task is to determine the distribution of $\ol{X}$ when the underlying distribution is not normal (i.e., almost always.)
+
+## the actual central limit theorem
+
+For any random variable $X$ with mean $\mu$ and variance $\sigma^2$, consider a sample $X_1,\ldots,X_n$ from the same distribution. 
+
+Now consider the sample average of this sample: $\ol{X}_n$ (because $n$ will be changing below...). 
+
+\pause The actual Central Limit Theorem (CLT) says:
+\begin{align*}
+\onslide<3->{\lim_{n\to\infty}} \onslide<2->{\P{\frac{\ol{X}_n - \mu}{\sigma/\sqrt{n}} \le u}} \onslide<4->{&= P(Z \le u)}\\
+\onslide<5->{\lim_{n\to\infty} F_n(u) &= F_Z(u)}
+\end{align*}
+\pause \pause where $Z \sim N(0,1)$.
+
+## the value of the CLT is in the speed of convergence
+
+Useful limit theorems are ones where the convergence is fast---the CLT is such an example.
+
+$$\P{\frac{\ol{X} - \mu}{\sigma/\sqrt{n}} \le u} \approx P(Z \le u)$$
+for $n$ "large enough".
+
+\pause How large? Depends on the shape of the underlying distribution $X$.
+
+* $n=2$ would need $X$ normal.
+* $n=10$ good enough for symmetric distributions without outliers.
+* $n=30$ for mildly skewed $X$.
+* $n>60$ for more skewed.
+
+## normal approximation example
+
+Piston lifetimes in a Diesel engine follow a roughly symmetric distribution with mean 3.4 years and standard deviation 2.1 years.
+
+What is the chance that the average life of 25 engines exceeds 4 years?
+
+$$\onslide<+->{P(\ol{X} > 4)} \onslide<+->{= \P{\frac{\ol{X} - 3.4}{2.1/\sqrt{25}} > \frac{4-3.4}{2.1/\sqrt{25}}}} \onslide<+->{\approx P(Z > 1.43)} \onslide<+->{= `r 1-pnorm(1.43)`}$$
