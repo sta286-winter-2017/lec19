@@ -113,8 +113,9 @@ $$S^2 = \frac{\sum\limits_{i=1}^n \left(X_i - \ol{X}\right)^2}{n-1}$$
 \pause More: 
 
 * the sum $\sum\limits_{i=1}^n X_i$
-* the \textit{sample median}...
+* the \textit{minimum} $X_{(1)}$
 * the \textit{maximum} $X_{(n)}$
+* the \textit{sample median} $\tilde{X}$
 * the \textit{sample range} $X_{(n)} - X_{(1)}$
 
 ## "sampling distributions"
@@ -150,37 +151,3 @@ $$\onslide<+->{\ol{X} \sim N\left(\mu, \frac{\sigma}{\sqrt{n}}\right)}
 
 \pause The seemingly impossible task is to determine the distribution of $\ol{X}$ when the underlying distribution is not normal (i.e., almost always.)
 
-## the actual central limit theorem
-
-For any random variable $X$ with mean $\mu$ and variance $\sigma^2$, consider a sample $X_1,\ldots,X_n$ from the same distribution. 
-
-Now consider the sample average of this sample: $\ol{X}_n$ (because $n$ will be changing below...). 
-
-\pause The actual Central Limit Theorem (CLT) says:
-\begin{align*}
-\onslide<3->{\lim_{n\to\infty}} \onslide<2->{\P{\frac{\ol{X}_n - \mu}{\sigma/\sqrt{n}} \le u}} \onslide<4->{&= P(Z \le u)}\\
-\onslide<5->{\lim_{n\to\infty} F_n(u) &= F_Z(u)}
-\end{align*}
-\pause \pause where $Z \sim N(0,1)$.
-
-## the value of the CLT is in the speed of convergence
-
-Useful limit theorems are ones where the convergence is fast---the CLT is such an example.
-
-$$\P{\frac{\ol{X} - \mu}{\sigma/\sqrt{n}} \le u} \approx P(Z \le u)$$
-for $n$ "large enough".
-
-\pause How large? Depends on the shape of the underlying distribution $X$.
-
-* $n=2$ would need $X$ normal.
-* $n=10$ good enough for symmetric distributions without outliers.
-* $n=30$ for mildly skewed $X$.
-* $n>60$ for more skewed.
-
-## normal approximation example
-
-Piston lifetimes in a Diesel engine follow a roughly symmetric distribution with mean 3.4 years and standard deviation 2.1 years.
-
-What is the chance that the average life of 25 engines exceeds 4 years?
-
-$$\onslide<+->{P(\ol{X} > 4)} \onslide<+->{= \P{\frac{\ol{X} - 3.4}{2.1/\sqrt{25}} > \frac{4-3.4}{2.1/\sqrt{25}}}} \onslide<+->{\approx P(Z > 1.43)} \onslide<+->{= `r 1-pnorm(1.43)`}$$
